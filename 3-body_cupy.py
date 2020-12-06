@@ -9,7 +9,7 @@ Simulate orbits of stars interacting due to gravity
 Code calculates pairwise forces according to Newton's Law of Gravity
 """
 
-def getAcc( pos, mass, G, softening ):
+def get_acc( pos, mass, G, softening ):
 	"""
     Calculate the acceleration on each particle due to Newton's Law 
 	pos  is an N x 3 matrix of positions
@@ -40,55 +40,18 @@ def getAcc( pos, mass, G, softening ):
 	a = cp.hstack((ax,ay,az))
 
 	return a
-	
-def getEnergy( pos, vel, mass, G ):
-	"""
-	Get kinetic energy (KE) and potential energy (PE) of simulation
-	pos is N x 3 matrix of positions
-	vel is N x 3 matrix of velocities
-	mass is an N x 1 vector of masses
-	G is Newton's Gravitational constant
-	KE is the kinetic energy of the system
-	PE is the potential energy of the system
-	"""
-	# Kinetic Energy:
-	KE = 0.5 * cp.sum(cp.sum( mass * vel**2 ))
-
-
-	# Potential Energy:
-
-	# positions r = [x,y,z] for all particles
-	x = pos[:,0:1]
-	y = pos[:,1:2]
-	z = pos[:,2:3]
-
-	# matrix that stores all pairwise particle separations: r_j - r_i
-	dx = x.T - x
-	dy = y.T - y
-	dz = z.T - z
-
-	# matrix that stores 1/r for all particle pairwise particle separations 
-	inv_r = cp.sqrt(dx**2 + dy**2 + dz**2)
-	inv_r[inv_r>0] = 1.0/inv_r[inv_r>0]
-
-	# sum over upper triangle, to count each interaction only once
-	PE = G * cp.sum(cp.sum(cp.triu(-(mass*mass.T)*inv_r,1)))
-	
-	return KE, PE;
-
 
 def main():
 	""" N-body simulation """
 	
 	# Simulation parameters
-	N         = 100    # Number of particles
+	N         = 3    # Number of particles
 	t         = 0      # current time of the simulation
 	tEnd      = 10.0   # time at which simulation ends
-	dt        = 0.01   # timestep
+	dt        = 0.0001   # timestep
 	softening = 0.1    # softening length
 	G         = 1.0    # Newton's Gravitational Constant
-	plotRealTime = True # switch on for plotting as the simulation goes along
-	
+
 	# Generate Initial Conditions
 	cp.random.seed(17)            # set the random number generator seed
 	
@@ -100,28 +63,10 @@ def main():
 	vel -= cp.mean(mass * vel,0) / cp.mean(mass)
 	
 	# calculate initial gravitational accelerations
-	acc = getAcc( pos, mass, G, softening )
-	
-	# calculate initial energy of system
-	KE, PE  = getEnergy( pos, vel, mass, G )
+	acc = get_acc( pos, mass, G, softening )
 	
 	# number of timesteps
 	Nt = int(cp.ceil(tEnd/dt))
-	
-	# save energies, particle orbits for plotting trails
-	pos_save = cp.zeros((N,3,Nt+1))
-	pos_save[:,:,0] = pos
-	KE_save = cp.zeros(Nt+1)
-	KE_save[0] = KE
-	PE_save = cp.zeros(Nt+1)
-	PE_save[0] = PE
-	t_all = cp.arange(Nt+1)*dt
-	
-	# prep figure
-	fig = plt.figure(figsize=(4,5), dpi=80)
-	grid = plt.GridSpec(3, 1, wspace=0.0, hspace=0.3)
-	ax1 = plt.subplot(grid[0:2,0])
-	ax2 = plt.subplot(grid[2,0])
 	
 	# Simulation Main Loop
 	for i in range(Nt):
@@ -132,58 +77,22 @@ def main():
 		pos += vel * dt
 		
 		# update accelerations
-		acc = getAcc( pos, mass, G, softening )
+		acc = get_acc( pos, mass, G, softening )
 		
 		# (1/2) kick
 		vel += acc * dt/2.0
 		
 		# update time
 		t += dt
-		
-		# get energy of system
-		KE, PE  = getEnergy( pos, vel, mass, G )
-		
-		# save energies, positions for plotting trail
-		pos_save[:,:,i+1] = pos
-		KE_save[i+1] = KE
-		PE_save[i+1] = PE
-		
-		# plot in real time
-		if plotRealTime or (i == Nt-1):
-			plt.sca(ax1)
-			plt.cla()
-			xx = pos_save[:,0,max(i-50,0):i+1]
-			yy = pos_save[:,1,max(i-50,0):i+1]
-			plt.scatter(xx.get(),yy.get(),s=1,color=[.7,.7,1])
-			plt.scatter(pos.get()[:,0],pos.get()[:,1],s=10,color='blue')
-			ax1.set(xlim=(-2, 2), ylim=(-2, 2))
-			ax1.set_aspect('equal', 'box')
-			ax1.set_xticks([-2,-1,0,1,2])
-			ax1.set_yticks([-2,-1,0,1,2])
-			
-			plt.sca(ax2)
-			plt.cla()
-			plt.scatter(t_all.get(),KE_save.get(),color='red',s=1,label='KE' if i == Nt-1 else "")
-			plt.scatter(t_all.get(),PE_save.get(),color='blue',s=1,label='PE' if i == Nt-1 else "")
-			plt.scatter(t_all.get(),(KE_save+PE_save).get(),color='black',s=1,label='Etot' if i == Nt-1 else "")
-			ax2.set(xlim=(0, tEnd), ylim=(-300, 300))
-			ax2.set_aspect(0.007)
-			
-			plt.pause(0.001)
-	    
+
+	dt = tEnd - Nt
+	vel += acc * dt/2.0
+	pos += vel * dt
+	acc = get_acc( pos, mass, G, softening )
+	vel += acc * dt/2.0
 	
 	cp.cuda.Stream.null.synchronize()
 	
-	# add labels/legend
-	plt.sca(ax2)
-	plt.xlabel('time')
-	plt.ylabel('energy')
-	ax2.legend(loc='upper right')
-	
-	# Save figure
-	plt.savefig('nbody.png',dpi=240)
-	plt.show()
-	    
 	return 0
 	
 

@@ -53,7 +53,6 @@ def n_body():
 	dt        = 0.0005   # timestep
 	softening = 0.1    # softening length
 	G         = 1.0    # Newton's Gravitational Constant
-	plotRealTime = True # switch on for plotting as the simulation goes along
 	
 	mass = 20.0*np.ones((N,1))/N  # total mass of particles is 20
 	init_pos  = np.random.randn(N,3)   # randomly selected positions and velocities
