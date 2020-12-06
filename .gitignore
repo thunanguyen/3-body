@@ -1,1 +1,3 @@
 ANN/data/*
+ANN/__pycache__
+__pycache__
