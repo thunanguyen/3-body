@@ -42,13 +42,13 @@ def get_acc( pos, mass, G, softening ):
 
 	return a
 
-def main():
+def main(tEnd):
 	""" N-body simulation """
 	
 	# Simulation parameters
 	N         = 3    # Number of particles
 	t         = 0      # current time of the simulation
-	tEnd      = 10.0   # time at which simulation ends
+	tEnd      = tEnd   # time at which simulation ends
 	dt        = 0.0005   # timestep
 	softening = 0.1    # softening length
 	G         = 1.0    # Newton's Gravitational Constant
@@ -103,4 +103,4 @@ if __name__== "__main__":
         s = time.time()
         main(args.end_time)
         e = time.time()
-        print(e-s)
+        print("The execution time of NumPy for the end time %0.2f is %0.2fs" % (args.end_time, e-s))

@@ -105,4 +105,4 @@ if __name__== "__main__":
         s = time.time()
         main(args.end_time)
         e = time.time()
-        print(e-s)
+        print("The execution time of CuPy for the end time %0.2f is %0.2fs" % (args.end_time, e-s))

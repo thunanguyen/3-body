@@ -47,7 +47,6 @@ if __name__ == '__main__':
 
             optimizer.zero_grad()
             
-            #pred_pos, pred_vel = model(init_pos.float(), init_vel.float(), init_t.float())
             pred_pos, pred_vel = model(init_pos.float(), init_vel.float(), init_t.float())
             loss = (criterion(pred_pos, final_pos) + criterion(pred_vel, final_vel)) / 2
 
