@@ -1,3 +1,4 @@
 ANN/data/*
+ANN/saved_models/*
 ANN/__pycache__/*
 __pycache__/*

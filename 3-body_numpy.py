@@ -1,4 +1,5 @@
 import time
+import argparse
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -48,7 +49,7 @@ def main():
 	N         = 3    # Number of particles
 	t         = 0      # current time of the simulation
 	tEnd      = 10.0   # time at which simulation ends
-	dt        = 0.0001   # timestep
+	dt        = 0.0005   # timestep
 	softening = 0.1    # softening length
 	G         = 1.0    # Newton's Gravitational Constant
 	
@@ -92,12 +93,14 @@ def main():
 	vel += acc * dt/2.0
 	    
 	return 0
-	
-
-
   
 if __name__== "__main__":
-  s = time.time()
-  main()
-  e = time.time()
-  print(e-s)
+        parser = argparse.ArgumentParser(description="Config file")
+        parser.add_argument('--end_time', type=float, default=10, help='The end time used for simulation')
+    
+        args = parser.parse_args()  
+        
+        s = time.time()
+        main(args.end_time)
+        e = time.time()
+        print(e-s)

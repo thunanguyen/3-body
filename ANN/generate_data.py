@@ -1,5 +1,7 @@
-import numpy as np
+import os
 import json
+import argparse
+import numpy as np
 import matplotlib.pyplot as plt
 
 """
@@ -92,15 +94,37 @@ def n_body():
 	return init_pos, init_vel, tEnd, pos, vel
 
 if __name__== "__main__":
-        np.random.seed(17)
+        parser = argparse.ArgumentParser(description="Config file")
+        parser.add_argument('--data_size', type=int, default=5000, help='The size of the dataset used for both training and testing the neural network')
+        args = parser.parse_args()
+
+        os.makedirs('data', exist_ok=True)
+        os.makedirs('data/training', exist_ok=True)
+        os.makedirs('data/testing', exist_ok=True)
         
-        for i in range(1000):
-                with open(f'data/init_{i}.npy', 'wb') as f:
+        np.random.seed(17)
+
+        training_size = int(args.data_size * 0.8)
+        testing_size = args.data_size - training_size
+        
+        for i in range(training_size):
+                with open(f'data/training/init_{i}.npy', 'wb') as f:
                         np.savez(f, pos=n_body()[0], vel=n_body()[1],  t=n_body()[2])
                         #init = n_body()[0].flatten() + n_body()[1].flatten()
                         #np.save(f, init)
 
-                with open(f'data/final_{i}.npy', 'wb') as f:
+                with open(f'data/training/final_{i}.npy', 'wb') as f:
+                        np.savez(f, pos=n_body()[3], vel=n_body()[4])
+                        #final = n_body()[2].flatten() + n_body()[3].flatten() + np.array([n_body()[4]])
+                        #np.save(f, final)
+
+        for i in range(testing_size):
+                with open(f'data/testing/init_{i}.npy', 'wb') as f:
+                        np.savez(f, pos=n_body()[0], vel=n_body()[1],  t=n_body()[2])
+                        #init = n_body()[0].flatten() + n_body()[1].flatten()
+                        #np.save(f, init)
+
+                with open(f'data/testing/final_{i}.npy', 'wb') as f:
                         np.savez(f, pos=n_body()[3], vel=n_body()[4])
                         #final = n_body()[2].flatten() + n_body()[3].flatten() + np.array([n_body()[4]])
                         #np.save(f, final)
