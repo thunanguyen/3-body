@@ -46,8 +46,8 @@ This is a proposed algorithm to solve 3-body problem using neural network used f
 # Minimum Requirements  
 Disk Size: 35MB  
 RAM: 16GB  
-GPU Memory Capacity: 4 GB
-CPU Memory Capacity: 16 GB
+GPU Memory Capacity: 4 GB  
+CPU Memory Capacity: 16 GB  
 Operation System: Window 10 or Ubuntu 20.04 LTS
 
 Note: ***If you use Linux, replace python as python3 when using the command line***
