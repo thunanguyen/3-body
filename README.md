@@ -1,6 +1,6 @@
 # 3-Body with Neural Network
 
-This is a proposed algorithm to solve 3-body problem using neural network used for the assignment in the course Parallel Computing. In this project, we provide **SIMPLE and EASY-to-handle command line tools**, a pretrained model and preprocessed dataset.
+This is a proposed algorithm to solve 3-body problem using neural network used for the assignment in the course Parallel Computing. In this repo, we've already provided **SIMPLE and EASY-to-handle command line tools, a pretrained model and preprocessed dataset**.
 
 # Minimum Requirements  
 Disk Size: 35MB  
@@ -28,9 +28,9 @@ cupy-cuda101=8.1.0
 
 ## Artificial Neural Network
 
-### Training
+### Training (Optional)
 
-1. Go to the **ANN** folder:
+1. Once obtain the dataset, go to the **ANN** folder:
 ``cd ANN``
 2. Train the model:
 ``python 3-body_ann.py --num_epochs num_epoch --saved_every_epoch period_to_save --batch_size batch_size``
